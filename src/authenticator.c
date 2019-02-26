@@ -3,8 +3,8 @@
 #include "sha1.h"
 
 static Window *window;
-static TextLayer *label_layer;
-static TextLayer *token_layer;
+static TextLayer *label_layers[3];
+static TextLayer *token_layers[3];
 static TextLayer *ticker_layer;
 
 static int current_token;
@@ -76,7 +76,7 @@ void vibration_handler(int current_seconds) {
 	}
 }
 
-uint32_t get_token() {
+uint32_t get_token(int current_token) {
 	sha1nfo s;
 	uint8_t ofs;
 	uint32_t otp;
@@ -116,17 +116,22 @@ uint32_t get_token() {
 
 void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 	int current_seconds = 30 - (tick_time->tm_sec % 30);
+	int i;
 
 	vibration_handler(current_seconds);
 
 	if (current_token_changed || current_seconds == 30) {
 		current_token_changed = false;
 
-		static char token_text[] = "000000";
-		snprintf(token_text, sizeof(token_text), "%06lu", get_token());
+		static char token_text[3][7] = {"000000", "000000", "000000"};
+		snprintf(token_text[0], sizeof(token_text[0]), "%06lu", get_token(current_token));
+		snprintf(token_text[1], sizeof(token_text[1]), "%06lu", get_token((current_token + 1) % NUM_SECRETS));
+		snprintf(token_text[2], sizeof(token_text[2]), "%06lu", get_token((current_token + 2) % NUM_SECRETS));
 
-		text_layer_set_text(label_layer, otp_labels[current_token]);
-		text_layer_set_text(token_layer, token_text);
+		for(i = 0; i < 3; i++) {
+			text_layer_set_text(label_layers[i], otp_labels[(current_token + i) % NUM_SECRETS]);
+			text_layer_set_text(token_layers[i], token_text[i]);
+		}
 	}
 
 	static char ticker_text[] = "00";
@@ -158,36 +163,43 @@ static void click_config_provider(void *context) {
 static void window_load(Window *window) {
 	Layer *window_layer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(window_layer);
+	int i;
 
-	label_layer = text_layer_create((GRect) { .origin = { 0, 20 }, .size = bounds.size });
-	text_layer_set_text_color(label_layer, GColorBlack);
-	text_layer_set_background_color(label_layer, GColorClear);
-	text_layer_set_font(label_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
-	text_layer_set_text_alignment(label_layer, GTextAlignmentCenter);
+	for(i = 0; i < 3; i++) {
+		label_layers[i] = text_layer_create((GRect) { .origin = { 0, 49 * i }, .size = bounds.size });
+		text_layer_set_text_color(label_layers[i], GColorBlack);
+		text_layer_set_background_color(label_layers[i], GColorClear);
+		text_layer_set_font(label_layers[i], fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
+		text_layer_set_text_alignment(label_layers[i], GTextAlignmentCenter);
 
-	token_layer = text_layer_create((GRect) { .origin = { 0, 60 }, .size = bounds.size });
-	text_layer_set_text_color(token_layer, GColorBlack);
-	text_layer_set_background_color(token_layer, GColorClear);
-	text_layer_set_font(token_layer, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
-	text_layer_set_text_alignment(token_layer, GTextAlignmentCenter);
+		token_layers[i] = text_layer_create((GRect) { .origin = { 0, 49 * i + 20 }, .size = bounds.size });
+		text_layer_set_text_color(token_layers[i], GColorBlack);
+		text_layer_set_background_color(token_layers[i], GColorClear);
+		text_layer_set_font(token_layers[i], fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
+		text_layer_set_text_alignment(token_layers[i], GTextAlignmentCenter);
 
-	ticker_layer = text_layer_create((GRect) { .origin = { 0, 120 }, .size = bounds.size });
+		layer_add_child(window_layer, text_layer_get_layer(label_layers[i]));
+		layer_add_child(window_layer, text_layer_get_layer(token_layers[i]));
+	}
+
+	ticker_layer = text_layer_create((GRect) { .origin = { 0, 147 }, .size = bounds.size });
 	text_layer_set_text_color(ticker_layer, GColorBlack);
 	text_layer_set_background_color(ticker_layer, GColorClear);
 	text_layer_set_font(ticker_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(ticker_layer, GTextAlignmentCenter);
 
-	layer_add_child(window_layer, text_layer_get_layer(label_layer));
-	layer_add_child(window_layer, text_layer_get_layer(token_layer));
 	layer_add_child(window_layer, text_layer_get_layer(ticker_layer));
 
 	tick_timer_service_subscribe(SECOND_UNIT, &handle_second_tick);
 }
 
 static void window_unload(Window *window) {
+	int i;
 	tick_timer_service_unsubscribe();
-	text_layer_destroy(label_layer);
-	text_layer_destroy(token_layer);
+	for(i = 0; i < 3; i++) {
+		text_layer_destroy(label_layers[i]);
+		text_layer_destroy(token_layers[i]);
+	}
 	text_layer_destroy(ticker_layer);
 }
 
