@@ -166,17 +166,17 @@ static void window_load(Window *window) {
 	int i;
 
 	for(i = 0; i < 3; i++) {
-		label_layers[i] = text_layer_create((GRect) { .origin = { 0, 49 * i }, .size = bounds.size });
+		label_layers[i] = text_layer_create((GRect) { .origin = { -5, 49 * i }, .size = bounds.size });
 		text_layer_set_text_color(label_layers[i], GColorBlack);
 		text_layer_set_background_color(label_layers[i], GColorClear);
 		text_layer_set_font(label_layers[i], fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
-		text_layer_set_text_alignment(label_layers[i], GTextAlignmentCenter);
+		text_layer_set_text_alignment(label_layers[i], GTextAlignmentRight);
 
-		token_layers[i] = text_layer_create((GRect) { .origin = { 0, 49 * i + 20 }, .size = bounds.size });
+		token_layers[i] = text_layer_create((GRect) { .origin = { 5, 49 * i + 20 }, .size = bounds.size });
 		text_layer_set_text_color(token_layers[i], GColorBlack);
 		text_layer_set_background_color(token_layers[i], GColorClear);
 		text_layer_set_font(token_layers[i], fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
-		text_layer_set_text_alignment(token_layers[i], GTextAlignmentCenter);
+		text_layer_set_text_alignment(token_layers[i], GTextAlignmentLeft);
 
 		layer_add_child(window_layer, text_layer_get_layer(label_layers[i]));
 		layer_add_child(window_layer, text_layer_get_layer(token_layers[i]));
