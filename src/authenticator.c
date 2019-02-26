@@ -168,13 +168,13 @@ static void window_load(Window *window) {
 	int i;
 
 	for(i = 0; i < NUM_SECRETS_VISIBLE; i++) {
-		label_layers[i] = text_layer_create((GRect) { .origin = { -5, 49 * i + (NUM_SECRETS_VISIBLE == 3 ? 0 : 20) }, .size = bounds.size });
+		label_layers[i] = text_layer_create((GRect) { .origin = { -5, 51 * i + (NUM_SECRETS_VISIBLE == 3 ? -3 : 17) }, .size = bounds.size });
 		text_layer_set_text_color(label_layers[i], GColorBlack);
 		text_layer_set_background_color(label_layers[i], GColorClear);
 		text_layer_set_font(label_layers[i], fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 		text_layer_set_text_alignment(label_layers[i], GTextAlignmentRight);
 
-		token_layers[i] = text_layer_create((GRect) { .origin = { 5, 49 * i + 20 + 20 * (3 - NUM_SECRETS_VISIBLE)}, .size = bounds.size });
+		token_layers[i] = text_layer_create((GRect) { .origin = { 5, 51 * i + 17 + 20 * (3 - NUM_SECRETS_VISIBLE)}, .size = bounds.size });
 		text_layer_set_text_color(token_layers[i], GColorBlack);
 		text_layer_set_background_color(token_layers[i], GColorClear);
 		text_layer_set_font(token_layers[i], fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
