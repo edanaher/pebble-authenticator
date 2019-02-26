@@ -71,7 +71,7 @@ void vibration_handler(int current_seconds) {
 	if (current_seconds == 5 && persist_exists(KEY_VIB_WARN) && persist_read_bool(KEY_VIB_WARN)) {
 		vibes_double_pulse();
 	}
-	if (current_seconds == 30 && persist_exists(KEY_VIB_RENEW) && persist_read_bool(KEY_VIB_RENEW)) {
+	if (current_seconds == 30 && (!persist_exists(KEY_VIB_RENEW) || persist_read_bool(KEY_VIB_RENEW))) {
 		vibes_short_pulse();
 	}
 }
