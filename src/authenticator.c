@@ -212,7 +212,7 @@ static void app_message_init(void) {
 static void init(void) {
 	app_message_init();
 
-	current_token = persist_exists(KEY_CURRENT_TOKEN) ? persist_read_int(KEY_CURRENT_TOKEN) : 0;
+	current_token = 0;//persist_exists(KEY_CURRENT_TOKEN) ? persist_read_int(KEY_CURRENT_TOKEN) : 0;
 	current_token_changed = true;
 
 	window = window_create();
@@ -231,7 +231,7 @@ static void init(void) {
 }
 
 static void deinit(void) {
-	persist_write_int(KEY_CURRENT_TOKEN, current_token);
+	//persist_write_int(KEY_CURRENT_TOKEN, current_token);
 	window_destroy(window);
 }
 
