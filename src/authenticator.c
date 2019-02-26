@@ -131,8 +131,13 @@ void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 		snprintf(token_text[2], sizeof(token_text[2]), "%06lu", get_token((current_token + 2) % NUM_SECRETS));
 
 		for(i = 0; i < NUM_SECRETS_VISIBLE; i++) {
-			text_layer_set_text(label_layers[i], otp_labels[(current_token + i) % NUM_SECRETS]);
-			text_layer_set_text(token_layers[i], token_text[i]);
+			if(current_token + i < NUM_SECRETS) {
+				text_layer_set_text(label_layers[i], otp_labels[(current_token + i) % NUM_SECRETS]);
+				text_layer_set_text(token_layers[i], token_text[i]);
+			} else {
+				text_layer_set_text(label_layers[i], "");
+				text_layer_set_text(token_layers[i], "");
+			}
 		}
 	}
 
@@ -144,11 +149,15 @@ void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 static void click_handler(ClickRecognizerRef recognizer, Window *window) {
 	switch ((int)click_recognizer_get_button_id(recognizer)) {
 		case BUTTON_ID_UP:
-			current_token = (current_token - 1 + NUM_SECRETS) % NUM_SECRETS;
+			current_token = current_token - 3;
+			if(current_token == -3)
+				current_token = ((NUM_SECRETS - 1)/ 3) * 3;
 			current_token_changed = true;
 			break;
 		case BUTTON_ID_DOWN:
-			current_token = (current_token + 1) % NUM_SECRETS;
+			current_token = current_token + 3;
+			if(current_token >= NUM_SECRETS)
+				current_token = 0;
 			current_token_changed = true;
 			break;
 	}
