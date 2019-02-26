@@ -11,6 +11,8 @@ static int current_token;
 static bool current_token_changed;
 static float timezone = DEFAULT_TIME_ZONE;
 
+#define NUM_SECRETS_VISIBLE ((NUM_SECRETS) >= 3 ? 3 : NUM_SECRETS)
+
 enum {
 	KEY_TIMEZONE,
 	KEY_VIB_WARN,
@@ -128,7 +130,7 @@ void handle_second_tick(struct tm *tick_time, TimeUnits units_changed) {
 		snprintf(token_text[1], sizeof(token_text[1]), "%06lu", get_token((current_token + 1) % NUM_SECRETS));
 		snprintf(token_text[2], sizeof(token_text[2]), "%06lu", get_token((current_token + 2) % NUM_SECRETS));
 
-		for(i = 0; i < 3; i++) {
+		for(i = 0; i < NUM_SECRETS_VISIBLE; i++) {
 			text_layer_set_text(label_layers[i], otp_labels[(current_token + i) % NUM_SECRETS]);
 			text_layer_set_text(token_layers[i], token_text[i]);
 		}
@@ -165,14 +167,14 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_bounds(window_layer);
 	int i;
 
-	for(i = 0; i < 3; i++) {
-		label_layers[i] = text_layer_create((GRect) { .origin = { -5, 49 * i }, .size = bounds.size });
+	for(i = 0; i < NUM_SECRETS_VISIBLE; i++) {
+		label_layers[i] = text_layer_create((GRect) { .origin = { -5, 49 * i + (NUM_SECRETS_VISIBLE == 3 ? 0 : 20) }, .size = bounds.size });
 		text_layer_set_text_color(label_layers[i], GColorBlack);
 		text_layer_set_background_color(label_layers[i], GColorClear);
 		text_layer_set_font(label_layers[i], fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 		text_layer_set_text_alignment(label_layers[i], GTextAlignmentRight);
 
-		token_layers[i] = text_layer_create((GRect) { .origin = { 5, 49 * i + 20 }, .size = bounds.size });
+		token_layers[i] = text_layer_create((GRect) { .origin = { 5, 49 * i + 20 + 20 * (3 - NUM_SECRETS_VISIBLE)}, .size = bounds.size });
 		text_layer_set_text_color(token_layers[i], GColorBlack);
 		text_layer_set_background_color(token_layers[i], GColorClear);
 		text_layer_set_font(token_layers[i], fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
@@ -182,7 +184,7 @@ static void window_load(Window *window) {
 		layer_add_child(window_layer, text_layer_get_layer(token_layers[i]));
 	}
 
-	ticker_layer = text_layer_create((GRect) { .origin = { 0, 147 }, .size = bounds.size });
+	ticker_layer = text_layer_create((GRect) { .origin = { 0, 147 - 13 * (3 - NUM_SECRETS_VISIBLE)}, .size = bounds.size });
 	text_layer_set_text_color(ticker_layer, GColorBlack);
 	text_layer_set_background_color(ticker_layer, GColorClear);
 	text_layer_set_font(ticker_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
@@ -196,7 +198,7 @@ static void window_load(Window *window) {
 static void window_unload(Window *window) {
 	int i;
 	tick_timer_service_unsubscribe();
-	for(i = 0; i < 3; i++) {
+	for(i = 0; i < NUM_SECRETS_VISIBLE; i++) {
 		text_layer_destroy(label_layers[i]);
 		text_layer_destroy(token_layers[i]);
 	}
