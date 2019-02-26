@@ -160,19 +160,19 @@ static void window_load(Window *window) {
 	GRect bounds = layer_get_bounds(window_layer);
 
 	label_layer = text_layer_create((GRect) { .origin = { 0, 20 }, .size = bounds.size });
-	text_layer_set_text_color(label_layer, GColorWhite);
+	text_layer_set_text_color(label_layer, GColorBlack);
 	text_layer_set_background_color(label_layer, GColorClear);
 	text_layer_set_font(label_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	text_layer_set_text_alignment(label_layer, GTextAlignmentCenter);
 
 	token_layer = text_layer_create((GRect) { .origin = { 0, 60 }, .size = bounds.size });
-	text_layer_set_text_color(token_layer, GColorWhite);
+	text_layer_set_text_color(token_layer, GColorBlack);
 	text_layer_set_background_color(token_layer, GColorClear);
 	text_layer_set_font(token_layer, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
 	text_layer_set_text_alignment(token_layer, GTextAlignmentCenter);
 
 	ticker_layer = text_layer_create((GRect) { .origin = { 0, 120 }, .size = bounds.size });
-	text_layer_set_text_color(ticker_layer, GColorWhite);
+	text_layer_set_text_color(ticker_layer, GColorBlack);
 	text_layer_set_background_color(ticker_layer, GColorClear);
 	text_layer_set_font(ticker_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
 	text_layer_set_text_alignment(ticker_layer, GTextAlignmentCenter);
@@ -210,7 +210,7 @@ static void init(void) {
 		.unload = window_unload,
 	});
 	window_stack_push(window, true /* animated */);
-	window_set_background_color(window, GColorBlack);
+	window_set_background_color(window, GColorWhite);
 
 	set_timezone();
 
