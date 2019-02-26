@@ -184,11 +184,11 @@ static void window_load(Window *window) {
 		layer_add_child(window_layer, text_layer_get_layer(token_layers[i]));
 	}
 
-	ticker_layer = text_layer_create((GRect) { .origin = { 0, 147 - 13 * (3 - NUM_SECRETS_VISIBLE)}, .size = bounds.size });
+	ticker_layer = text_layer_create((GRect) { .origin = { -5, 147 - 13 * (3 - NUM_SECRETS_VISIBLE)}, .size = bounds.size });
 	text_layer_set_text_color(ticker_layer, GColorBlack);
 	text_layer_set_background_color(ticker_layer, GColorClear);
 	text_layer_set_font(ticker_layer, fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD));
-	text_layer_set_text_alignment(ticker_layer, GTextAlignmentCenter);
+	text_layer_set_text_alignment(ticker_layer, GTextAlignmentRight);
 
 	layer_add_child(window_layer, text_layer_get_layer(ticker_layer));
 
