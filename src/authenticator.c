@@ -178,7 +178,7 @@ static void window_load(Window *window) {
 
 	for(i = 0; i < NUM_SECRETS_VISIBLE; i++) {
 		label_layers[i] = text_layer_create((GRect) { .origin = { -5, 51 * i + (NUM_SECRETS_VISIBLE == 3 ? -3 : 17) }, .size = bounds.size });
-		text_layer_set_text_color(label_layers[i], GColorBlack);
+		text_layer_set_text_color(label_layers[i], GColorBlue);
 		text_layer_set_background_color(label_layers[i], GColorClear);
 		text_layer_set_font(label_layers[i], fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 		text_layer_set_text_alignment(label_layers[i], GTextAlignmentRight);
